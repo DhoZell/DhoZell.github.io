@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — HTML/CSS/JS ke GitHub Pages</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06080f;
+    --surface: #0d1017;
+    --card: #111520;
+    --border: #1e2535;
+    --accent: #6eb5ff;
+    --accent2: #a78bfa;
+    --green: #7fff6e;
+    --red: #ff6b6b;
+    --yellow: #ffe066;
+    --text: #dde4f0;
+    --muted: #6a7a9a;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Bricolage Grotesque',sans-serif; line-height:1.7; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:9999; opacity:0.5; }
+
+  /* HERO */
+  .hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:80px 40px 60px; border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+  .hero::after { content:''; position:absolute; top:-300px; left:-100px; width:700px; height:700px; background:radial-gradient(circle, rgba(110,181,255,0.06) 0%, transparent 65%); pointer-events:none; }
+
+  .badge { display:inline-flex; align-items:center; gap:8px; background:rgba(110,181,255,0.1); border:1px solid rgba(110,181,255,0.3); color:var(--accent); font-family:'Space Mono',monospace; font-size:12px; padding:6px 14px; border-radius:4px; margin-bottom:32px; width:fit-content; }
+  .badge::before { content:''; width:6px; height:6px; background:var(--accent); border-radius:50%; animation:blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  @keyframes fadein { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  h1 { font-size:clamp(42px,7vw,88px); font-weight:800; line-height:1.05; letter-spacing:-3px; margin-bottom:24px; animation:fadein 0.6s ease 0.1s both; }
+  h1 .blue { color:var(--accent); }
+  h1 .purple { color:var(--accent2); }
+  .hero-sub { font-size:17px; color:var(--muted); max-width:520px; margin-bottom:48px; animation:fadein 0.6s ease 0.2s both; }
+
+  .steps-mini { display:flex; gap:12px; flex-wrap:wrap; animation:fadein 0.6s ease 0.3s both; }
+  .step-pill { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 18px; font-size:13px; display:flex; align-items:center; gap:8px; }
+  .step-pill .num { width:22px; height:22px; border-radius:50%; background:rgba(110,181,255,0.15); color:var(--accent); font-size:11px; font-weight:700; font-family:'Space Mono',monospace; display:flex; align-items:center; justify-content:center; }
+
+  /* NAV */
+  .nav { position:sticky; top:0; z-index:100; background:rgba(6,8,15,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 40px; display:flex; gap:0; overflow-x:auto; }
+  .nav a { display:block; padding:16px 18px; color:var(--muted); text-decoration:none; font-family:'Space Mono',monospace; font-size:11px; white-space:nowrap; transition:color 0.2s; border-bottom:2px solid transparent; letter-spacing:0.5px; }
+  .nav a:hover, .nav a.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+  /* MAIN */
+  .container { max-width:900px; margin:0 auto; padding:80px 40px; }
+  h2 { font-size:34px; font-weight:800; margin-bottom:8px; letter-spacing:-1px; }
+  .section-tag { font-family:'Space Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; display:block; }
+  .divider { width:40px; height:3px; background:var(--accent); margin:20px 0 40px; border-radius:2px; }
+  p { color:var(--muted); font-size:15px; }
+  hr.sep { border:none; border-top:1px solid var(--border); margin:0; }
+
+  /* CARD */
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:28px; margin-bottom:20px; transition:border-color 0.2s; overflow:hidden; min-width:0; }
+  .card:hover { border-color:rgba(110,181,255,0.4); }
+  .card-title { font-size:18px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:10px; }
+  .icon { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+  .icon-blue { background:rgba(110,181,255,0.12); }
+  .icon-green { background:rgba(127,255,110,0.12); }
+  .icon-purple { background:rgba(167,139,250,0.12); }
+  .icon-yellow { background:rgba(255,224,102,0.12); }
+  .icon-red { background:rgba(255,107,107,0.12); }
+
+  /* LIST */
+  .list { list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .list li { display:flex; align-items:flex-start; gap:12px; color:var(--muted); font-size:14px; line-height:1.6; }
+  .list li::before { content:'→'; color:var(--accent); font-family:'Space Mono',monospace; font-size:11px; flex-shrink:0; margin-top:3px; }
+
+  /* NOTE */
+  .note { border-radius:10px; padding:16px 20px; margin:20px 0; display:flex; gap:14px; align-items:flex-start; font-size:14px; line-height:1.6; }
+  .note-icon { font-size:17px; flex-shrink:0; margin-top:2px; }
+  .note-info { background:rgba(110,181,255,0.07); border:1px solid rgba(110,181,255,0.2); color:#a8d4ff; }
+  .note-warn { background:rgba(255,224,102,0.07); border:1px solid rgba(255,224,102,0.22); color:#ffe99a; }
+  .note-danger { background:rgba(255,107,107,0.07); border:1px solid rgba(255,107,107,0.2); color:#ffaaa8; }
+  .note-success { background:rgba(127,255,110,0.07); border:1px solid rgba(127,255,110,0.2); color:#b0ffaa; }
+
+  /* CODE */
+  .code-block { background:#050810; border:1px solid var(--border); border-radius:10px; overflow:hidden; margin:20px 0; max-width:100%; }
+  .code-header { display:flex; align-items:center; justify-content:space-between; padding:10px 18px; background:var(--surface); border-bottom:1px solid var(--border); }
+  .code-lang { font-family:'Space Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .code-dots { display:flex; gap:6px; flex-shrink:0; }
+  .code-dots span { width:10px; height:10px; border-radius:50%; }
+  pre { font-family:'Space Mono',monospace; font-size:13px; line-height:1.85; padding:22px; overflow-x:auto; color:#c9d1d9; }
+
+  .kw { color:#ff79c6; }
+  .fn { color:#8be9fd; }
+  .str { color:#f1fa8c; }
+  .cm { color:#5a6380; }
+  .tag { color:#ff9580; }
+  .attr { color:var(--accent); }
+  .val { color:var(--green); }
+  .num { color:#bd93f9; }
+
+  /* STEPS */
+  .steps { display:flex; flex-direction:column; gap:0; }
+  .step { display:grid; grid-template-columns:56px 1fr; gap:22px; padding-bottom:36px; position:relative; }
+  .step:last-child { padding-bottom:0; }
+  .step-num { width:42px; height:42px; border-radius:50%; border:2px solid var(--accent); display:flex; align-items:center; justify-content:center; font-family:'Space Mono',monospace; font-weight:700; color:var(--accent); font-size:15px; background:var(--bg); position:relative; z-index:1; flex-shrink:0; }
+  .step:not(:last-child) .step-num::after { content:''; position:absolute; top:42px; left:50%; transform:translateX(-50%); width:2px; height:calc(100% + 14px); background:var(--border); }
+  .step-content { padding-top:8px; }
+  .step-title { font-size:17px; font-weight:700; margin-bottom:8px; color:var(--text); }
+  .step-body { color:var(--muted); font-size:14px; line-height:1.7; }
+
+  /* STEPS INSIDE CARD — fix background mismatch */
+  .card .step-num { background:var(--card); }
+  .card .steps { margin-top:20px; }
+  .card .step { padding-bottom:28px; }
+  .card .step:last-child { padding-bottom:0; }
+  .card .step:not(:last-child) .step-num::after { height:calc(100% + 10px); }
+
+  /* PAT STEPS — clean numbered layout inside card, no connector line */
+  .pat-steps { display:flex; flex-direction:column; gap:0; }
+  .pat-step { display:flex; gap:14px; align-items:flex-start; padding:20px 0; border-bottom:1px solid var(--border); min-width:0; }
+  .pat-step:first-child { padding-top:0; }
+  .pat-num { width:30px; height:30px; min-width:30px; border-radius:8px; background:rgba(167,139,250,0.15); border:1px solid rgba(167,139,250,0.3); color:var(--accent2); font-family:'Space Mono',monospace; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+  .pat-body { flex:1; min-width:0; overflow:hidden; }
+  .pat-title { font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px; }
+  .pat-desc { font-size:13.5px; color:var(--muted); line-height:1.7; word-break:break-word; }
+  .pat-body .code-block { overflow:hidden; }
+  .pat-body pre { overflow-x:auto; font-size:12px; padding:16px; white-space:pre; word-break:normal; }
+
+  /* TABLE */
+  table { width:100%; border-collapse:collapse; margin-top:24px; font-size:14px; }
+  th { background:var(--surface); padding:13px 18px; text-align:left; font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; border-bottom:1px solid var(--border); }
+  td { padding:13px 18px; border-bottom:1px solid var(--border); color:var(--muted); vertical-align:top; }
+  tr:hover td { background:rgba(255,255,255,0.02); }
+  td:first-child { color:var(--text); font-weight:700; font-family:'Space Mono',monospace; font-size:13px; }
+  td:last-child { color:var(--green); font-weight:600; }
+
+  /* PROGRESS BAR */
+  .progress-container { display:flex; gap:4px; margin-bottom:40px; }
+  .progress-step { flex:1; height:3px; background:var(--border); border-radius:2px; transition:background 0.3s; cursor:pointer; }
+  .progress-step.done { background:var(--accent); }
+  .progress-step.active { background:var(--accent2); }
+
+  /* FOOTER */
+  footer { border-top:1px solid var(--border); padding:60px 40px; text-align:center; max-width:900px; margin:0 auto; }
+  .footer-big { font-size:44px; font-weight:800; letter-spacing:-2px; margin-bottom:16px; }
+  .highlight { color:var(--green); }
+  .tag-pill { display:inline-block; background:rgba(110,181,255,0.08); border:1px solid rgba(110,181,255,0.2); color:var(--accent); font-size:12px; padding:3px 10px; border-radius:4px; font-family:'Space Mono',monospace; margin:4px; }
+
+  @media(max-width:600px) {
+    .hero { padding:60px 20px 40px; }
+    h1 { font-size:38px; letter-spacing:-2px; }
+    .container { padding:50px 20px; }
+    .nav { padding:0 16px; }
+    footer { padding:40px 20px; }
+    .steps-mini { gap:8px; }
+    .card { padding:20px; }
+    pre { font-size:11px; padding:14px; }
+    .code-lang { font-size:10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">TUTORIAL LENGKAP</div>
+  <h1>Dari <span class="blue">kode</span><br>jadi <span class="purple">link</span><br>online.</h1>
+  <p class="hero-sub">Panduan step-by-step cara bikin website HTML/CSS/JS dari nol, upload ke GitHub, dan dapetin link gratis via GitHub Pages. Scroll kebawah!!!</p>
+  <div class="steps-mini">
+    <div class="step-pill"><span class="num">1</span> Bikin file</div>
+    <div class="step-pill"><span class="num">2</span> Login GitHub</div>
+    <div class="step-pill"><span class="num">3</span> Buat repo</div>
+    <div class="step-pill"><span class="num">4</span> Upload</div>
+    <div class="step-pill"><span class="num">5</span> Aktifkan Pages</div>
+    <div class="step-pill"><span class="num">6</span> 🎉 Link jadi!</div>
+  </div>
+</section>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#html" class="active">HTML/CSS/JS</a>
+  <a href="#github">GitHub</a>
+  <a href="#repo">Buat Repo</a>
+  <a href="#upload">Upload</a>
+  <a href="#pages">GitHub Pages</a>
+  <a href="#update">Update</a>
+  <a href="#troubleshoot">Troubleshoot</a>
+  <a href="#ringkasan">Ringkasan</a>
+</nav>
+
+<!-- SECTION HTML/CSS/JS -->
+<section id="html">
+  <div class="container">
+    <span class="section-tag">01 — Persiapan</span>
+    <h2>Persiapan & Bikin File Project</h2>
+    <div class="divider"></div>
+
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title"><div class="icon icon-blue">🖥️</div>Pakai Editor Kode (Wajib)</div>
+      <p style="margin-bottom:14px;">Jangan nulis kode di Notepad biasa. Kamu butuh code editor yang punya syntax highlighting dan autocomplete.</p>
+      <ul class="list">
+        <li><strong style="color:var(--text);">Visual Studio Code (VS Code)</strong> — Rekomendasi utama. Gratis, ringan, banyak extension. Download di code.visualstudio.com</li>
+        <li><strong style="color:var(--text);">Sublime Text</strong> — Alternatif, juga gratis untuk basic use</li>
+        <li><strong style="color:var(--text);">Notepad++</strong> — Minimal tapi lumayan buat Windows</li>
+      </ul>
+      <div class="note note-success" style="margin-top:16px;">
+        <span class="note-icon">✅</span>
+        <span>Install VS Code, lalu install extension <strong>Live Server</strong> (klik ikon kotak di sidebar kiri VS Code, cari "Live Server"). Extension ini bikin kamu bisa preview website real-time tanpa refresh manual.</span>
+      </div>
+    </div>
+
+    <p style="color:var(--text); font-size:16px; margin-bottom:24px;">Setelah install editor, buat folder baru di komputer kamu. Di dalam folder itu, bikin 3 file berikut.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+        <span class="code-lang">STRUKTUR FOLDER</span>
+      </div>
+      <pre>my-project/
+├── <span class="val">index.html</span>     <span class="cm">&lt;-- halaman utama</span>
+├── <span class="val">style.css</span>      <span class="cm">&lt;-- tampilan visual</span>
+└── <span class="val">script.js</span>      <span class="cm">&lt;-- logika & interaksi</span></pre>
+    </div>
+
+    <div class="note note-info">
+      <span class="note-icon">ℹ️</span>
+      <span>File utama HARUS bernama <strong>index.html</strong> (huruf kecil semua). GitHub Pages otomatis buka file ini saat link dibuka.</span>
+    </div>
+
+    <!-- HTML -->
+    <div class="card" style="margin-top:32px;">
+      <div class="card-title"><div class="icon icon-red">📄</div>index.html — Struktur Halaman</div>
+      <p>HTML adalah kerangka website. Semua konten (teks, gambar, tombol) ditulis di sini.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span class="code-lang">HTML</span>
+        </div>
+        <pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="val">"id"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="val">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val">"viewport"</span> <span class="attr">content</span>=<span class="val">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Website Pertamaku<span class="tag">&lt;/title&gt;</span>
+  <span class="cm">&lt;!-- Hubungkan CSS --&gt;</span>
+  <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val">"stylesheet"</span> <span class="attr">href</span>=<span class="val">"style.css"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="tag">&lt;header&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>Halo, Dunia! 👋<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;p&gt;</span>Ini website pertama saya yang live di internet.<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/header&gt;</span>
+
+  <span class="tag">&lt;main&gt;</span>
+    <span class="tag">&lt;button</span> <span class="attr">id</span>=<span class="val">"btn"</span><span class="tag">&gt;</span>Klik Saya<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;p</span> <span class="attr">id</span>=<span class="val">"pesan"</span><span class="tag">&gt;&lt;/p&gt;</span>
+  <span class="tag">&lt;/main&gt;</span>
+
+  <span class="cm">&lt;!-- Hubungkan JS di akhir body --&gt;</span>
+  <span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="val">"script.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+      </div>
+      <ul class="list">
+        <li>Tag &lt;head&gt; berisi metadata, judul tab, dan link ke CSS</li>
+        <li>Tag &lt;body&gt; berisi semua konten yang tampil di layar</li>
+        <li>Script JS ditaruh di bawah sebelum &lt;/body&gt; supaya HTML dimuat dulu</li>
+      </ul>
+    </div>
+
+    <!-- CSS -->
+    <div class="card">
+      <div class="card-title"><div class="icon icon-blue">🎨</div>style.css — Tampilan Visual</div>
+      <p>CSS mengatur warna, ukuran, layout, dan animasi. Tanpa CSS, website kamu bakal polos kayak Word document.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span class="code-lang">CSS</span>
+        </div>
+        <pre><span class="cm">/* Reset bawaan browser */</span>
+* {
+  margin: <span class="num">0</span>;
+  padding: <span class="num">0</span>;
+  box-sizing: <span class="val">border-box</span>;
+}
+
+body {
+  font-family: <span class="str">'Segoe UI'</span>, sans-serif;
+  background: <span class="val">#f5f5f5</span>;
+  color: <span class="val">#222</span>;
+  padding: <span class="num">40px</span>;
+}
+
+header {
+  text-align: <span class="val">center</span>;
+  margin-bottom: <span class="num">40px</span>;
+}
+
+h1 {
+  font-size: <span class="num">48px</span>;
+  margin-bottom: <span class="num">12px</span>;
+}
+
+button {
+  display: <span class="val">block</span>;
+  margin: <span class="num">0 auto</span>;
+  padding: <span class="num">12px 28px</span>;
+  background: <span class="val">#6366f1</span>;
+  color: <span class="val">white</span>;
+  border: <span class="val">none</span>;
+  border-radius: <span class="num">8px</span>;
+  font-size: <span class="num">16px</span>;
+  cursor: <span class="val">pointer</span>;
+  transition: <span class="val">background 0.2s</span>;
+}
+
+<span class="cm">/* Hover effect */</span>
+button:hover {
+  background: <span class="val">#4f46e5</span>;
+}
+
+#pesan {
+  text-align: <span class="val">center</span>;
+  margin-top: <span class="num">20px</span>;
+  font-size: <span class="num">18px</span>;
+  color: <span class="val">#6366f1</span>;
+}</pre>
+      </div>
+      <ul class="list">
+        <li>Selector (* artinya semua elemen, h1 artinya khusus elemen h1)</li>
+        <li>Property seperti color, background, font-size adalah yang diubah</li>
+        <li>Nilai ditulis setelah titik dua dan diakhiri titik koma</li>
+      </ul>
+    </div>
+
+    <!-- JS -->
+    <div class="card">
+      <div class="card-title"><div class="icon icon-yellow">⚡</div>script.js — Interaktivitas</div>
+      <p>JavaScript bikin website bisa merespons aksi pengguna. Tanpa JS, tombol kamu cuma pajangan.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span class="code-lang">JAVASCRIPT</span>
+        </div>
+        <pre><span class="cm">// Ambil elemen dari HTML menggunakan ID-nya</span>
+<span class="kw">const</span> btn = document.<span class="fn">getElementById</span>(<span class="str">'btn'</span>)
+<span class="kw">const</span> pesan = document.<span class="fn">getElementById</span>(<span class="str">'pesan'</span>)
+
+<span class="cm">// Dengerin event 'click' pada tombol</span>
+btn.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {
+  pesan.textContent = <span class="str">'Kamu berhasil klik tombol! 🎉'</span>
+  btn.style.background = <span class="str">'#16a34a'</span>
+})
+
+<span class="cm">// Contoh lain: ubah teks setiap detik</span>
+<span class="kw">let</span> count = <span class="num">0</span>
+<span class="fn">setInterval</span>(() => {
+  count++
+  console.<span class="fn">log</span>(<span class="str">`Halaman sudah dibuka ${count} detik`</span>)
+}, <span class="num">1000</span>)</pre>
+      </div>
+      <ul class="list">
+        <li>const dan let dipakai untuk menyimpan nilai (variabel)</li>
+        <li>addEventListener menunggu aksi pengguna (klik, ketik, hover)</li>
+        <li>console.log berguna untuk debug, tidak tampil ke pengguna</li>
+      </ul>
+
+      <div class="note note-warn" style="margin-top:16px;">
+        <span class="note-icon">⚠️</span>
+        <span>Selalu cek browser console (F12) kalau ada error. Error JS biasanya ada di tab "Console".</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- SECTION GITHUB -->
+<section id="github">
+  <div class="container">
+    <span class="section-tag">02 — Akun</span>
+    <h2>Daftar & Login GitHub</h2>
+    <div class="divider"></div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Buka github.com</div>
+          <div class="step-body">Klik tombol "Sign up" di pojok kanan atas. Kalau sudah punya akun, klik "Sign in" aja.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Isi data pendaftaran</div>
+          <div class="step-body">Masukkan email, buat username, dan password. Username ini penting karena jadi bagian dari link website kamu nanti.</div>
+          <div class="note note-info" style="margin-top:12px;">
+            <span class="note-icon">💡</span>
+            <span>Pilih username yang profesional dan mudah diingat. Format link nanti: <strong>username.github.io/nama-repo</strong></span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Verifikasi email</div>
+          <div class="step-body">Cek inbox kamu, klik link verifikasi dari GitHub. Kalau nggak ada, cek folder spam.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Masuk ke dashboard</div>
+          <div class="step-body">Setelah verifikasi, kamu langsung diarahkan ke dashboard GitHub. Siap lanjut ke langkah berikutnya.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- SECTION REPO -->
+<section id="repo">
+  <div class="container">
+    <span class="section-tag">03 — Repository</span>
+    <h2>Buat Repository Baru</h2>
+    <div class="divider"></div>
+    <p style="font-size:15px; color:var(--text); margin-bottom:28px;">Repository (repo) adalah tempat penyimpanan file project kamu di GitHub. Anggap aja seperti folder project tapi di cloud.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Klik tombol "+"</div>
+          <div class="step-body">Ada di pojok kanan atas, di sebelah foto profil kamu. Pilih "New repository".</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Isi nama repository</div>
+          <div class="step-body">Pakai huruf kecil dan tanda minus untuk spasi. Contoh: my-website, portofolio-2025, tugas-pemweb.</div>
+          <div class="note note-warn" style="margin-top:12px;">
+            <span class="note-icon">⚠️</span>
+            <span>Hindari spasi dan karakter spesial di nama repo. Pakai tanda minus (-) sebagai pemisah kata.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Set visibility ke Public</div>
+          <div class="step-body">Wajib Public kalau mau pakai GitHub Pages gratis. Repository Private butuh akun berbayar untuk fitur Pages.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Centang "Add a README file"</div>
+          <div class="step-body">Ini opsional tapi disarankan. README adalah file deskripsi project yang tampil di halaman repo.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Klik "Create repository"</div>
+          <div class="step-body">Repo kamu sudah jadi! Sekarang waktunya upload file project.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- SECTION UPLOAD -->
+<section id="upload">
+  <div class="container">
+    <span class="section-tag">04 — Upload File</span>
+    <h2>Upload File ke GitHub</h2>
+    <div class="divider"></div>
+    <p style="font-size:15px; color:var(--text); margin-bottom:28px;">Ada 2 cara. Pilih salah satu yang paling nyaman buat kamu.</p>
+
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title"><div class="icon icon-green">🖱️</div>Cara A — Upload Langsung di Browser</div>
+      <p style="margin-bottom:14px;">Cocok buat yang belum install Git. Nggak perlu terminal sama sekali.</p>
+      <ul class="list">
+        <li>Buka halaman repository kamu di GitHub</li>
+        <li>Klik tombol "Add file", pilih "Upload files"</li>
+        <li>Drag & drop semua file project (index.html, style.css, script.js) ke area upload</li>
+        <li>Di bagian bawah, tulis pesan commit, contoh: "upload project pertama"</li>
+        <li>Klik "Commit changes"</li>
+      </ul>
+      <div class="note note-success" style="margin-top:16px;">
+        <span class="note-icon">✅</span>
+        <span>Cara ini paling simpel. Cocok banget buat yang baru pertama kali.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-purple">💻</div>Cara B — Pakai Git di Terminal</div>
+      <p style="margin-bottom:14px;">Cara ini lebih powerful dan jadi kebiasaan programmer profesional. Install Git dulu dari git-scm.com.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span class="code-lang">TERMINAL / CMD / POWERSHELL</span>
+        </div>
+        <pre><span class="cm"># Step 1: Konfigurasi identitas (lakukan sekali saja)</span>
+git config --global user.name <span class="str">"Nama Kamu"</span>
+git config --global user.email <span class="str">"email@kamu.com"</span>
+
+<span class="cm"># Step 2: Masuk ke folder project</span>
+cd my-project
+
+<span class="cm"># Step 3: Inisialisasi Git di folder ini</span>
+git init
+
+<span class="cm"># Step 4: Tambahkan semua file ke staging</span>
+git add .
+
+<span class="cm"># Step 5: Commit dengan pesan yang jelas</span>
+git commit -m <span class="str">"upload project pertama"</span>
+
+<span class="cm"># Step 6: Hubungkan ke repo GitHub</span>
+<span class="cm"># (copy URL dari tombol "Code" di halaman repo)</span>
+git remote add origin https://github.com/username/my-website.git
+
+<span class="cm"># Step 7: Upload ke GitHub</span>
+git branch -M main
+git push -u origin main</pre>
+      </div>
+
+      <ul class="list" style="margin-top:16px;">
+        <li>git add . artinya tambahkan SEMUA file yang berubah</li>
+        <li>git commit adalah "simpan snapshot" dari kode kamu</li>
+        <li>git push adalah "upload" snapshot itu ke GitHub</li>
+      </ul>
+
+      <div class="note note-danger" style="margin-top:16px;">
+        <span class="note-icon">🚫</span>
+        <span><strong>PENTING:</strong> Sejak Agustus 2021, GitHub sudah TIDAK menerima password biasa untuk git push via HTTPS. Kamu WAJIB pakai Personal Access Token (PAT) atau SSH key. Lihat instruksi di bawah.</span>
+      </div>
+    </div>
+
+    <!-- PAT SECTION -->
+    <div class="card" style="border-color:rgba(167,139,250,0.4); padding:32px;">
+      <div class="card-title"><div class="icon icon-purple">🔑</div>Cara Buat Personal Access Token (PAT)</div>
+      <p style="margin-bottom:24px;">PAT adalah pengganti password untuk autentikasi Git via terminal. Wajib dibuat kalau pakai HTTPS.</p>
+
+      <div class="pat-steps">
+
+        <div class="pat-step">
+          <div class="pat-num">1</div>
+          <div class="pat-body">
+            <div class="pat-title">Buka Settings GitHub</div>
+            <div class="pat-desc">Login ke github.com. Klik foto profil di pojok kanan atas. Pilih <strong>"Settings"</strong>.</div>
+          </div>
+        </div>
+
+        <div class="pat-step">
+          <div class="pat-num">2</div>
+          <div class="pat-body">
+            <div class="pat-title">Masuk ke Developer Settings</div>
+            <div class="pat-desc">Scroll ke bawah sidebar kiri Settings sampai nemu <strong>"Developer settings"</strong>. Klik. Lalu pilih <strong>"Personal access tokens"</strong> → <strong>"Tokens (classic)"</strong>.</div>
+          </div>
+        </div>
+
+        <div class="pat-step">
+          <div class="pat-num">3</div>
+          <div class="pat-body">
+            <div class="pat-title">Generate new token</div>
+            <div class="pat-desc">Klik <strong>"Generate new token"</strong> → pilih <strong>"Generate new token (classic)"</strong>. Isi <em>Note</em> (nama token, bebas, misal: "laptop-kantor"). Set <em>Expiration</em> sesuai kebutuhan. Centang scope <strong>"repo"</strong> — ini wajib supaya bisa push code.</div>
+          </div>
+        </div>
+
+        <div class="pat-step">
+          <div class="pat-num">4</div>
+          <div class="pat-body">
+            <div class="pat-title">Copy token SEKARANG</div>
+            <div class="pat-desc">Klik <strong>"Generate token"</strong>. Token muncul <strong>SEKALI SAJA</strong>. Langsung copy dan simpan di tempat aman (Notepad, password manager). Kalau halaman ditutup, token tidak bisa dilihat lagi dan harus bikin ulang.</div>
+            <div class="note note-danger" style="margin:12px 0 0;">
+              <span class="note-icon">🚫</span>
+              <span>Token ini setara password. Jangan share ke siapapun. Jangan ikut di-commit ke repo. Kalau bocor, hapus token itu di GitHub dan buat yang baru.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pat-step" style="border-bottom:none; padding-bottom:0;">
+          <div class="pat-num">5</div>
+          <div class="pat-body">
+            <div class="pat-title">Pakai token saat git push</div>
+            <div class="pat-desc">Saat terminal minta <em>Password</em>, paste token itu (bukan password akun GitHub). Terminal tidak menampilkan karakter apapun saat paste — itu normal, langsung Enter saja.</div>
+            <div class="code-block" style="margin-top:14px;">
+              <div class="code-header">
+                <div class="code-dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+                <span class="code-lang">TERMINAL — LOGIN DENGAN TOKEN</span>
+              </div>
+              <pre><span class="cm"># Saat diminta credentials:</span>
+Username: <span class="val">username_github_kamu</span>
+Password: <span class="str">ghp_xxxxxxxxxxxxxxxxxxxx</span>  <span class="cm">&lt;-- paste token di sini</span>
+
+<span class="cm"># Biar tidak diminta ulang setiap push, jalankan ini:</span>
+git config --global credential.helper store
+<span class="cm"># Setelah push pertama berhasil, credentials tersimpan otomatis</span></pre>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="note note-info" style="margin-top:24px; margin-bottom:0;">
+        <span class="note-icon">💡</span>
+        <span>Alternatif lebih aman: pakai <strong>SSH key</strong>. Buka terminal, ketik <code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;font-family:'Space Mono',monospace;font-size:12px;">ssh-keygen -t ed25519 -C "email@kamu.com"</code>, lalu tambahkan public key ke GitHub di <strong>Settings → SSH and GPG keys</strong>. Dengan SSH, tidak perlu input credentials setiap push.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- SECTION PAGES -->
+<section id="pages">
+  <div class="container">
+    <span class="section-tag">05 — Deploy</span>
+    <h2>Aktifkan GitHub Pages</h2>
+    <div class="divider"></div>
+    <p style="font-size:15px; color:var(--text); margin-bottom:32px;">Ini langkah terakhir. Setelah ini website kamu bisa diakses siapa aja.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Buka tab "Settings"</div>
+          <div class="step-body">Di halaman repository, ada tab Settings di baris menu atas (paling kanan). Klik itu.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Cari menu "Pages"</div>
+          <div class="step-body">Di sidebar kiri Settings, scroll ke bawah sampai nemu "Pages" di bawah bagian "Code and automation".</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Pilih source branch</div>
+          <div class="step-body">Di bagian "Build and deployment", set Source ke "Deploy from a branch". Lalu pilih branch "main" dan folder "/ (root)". Klik Save.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Tunggu 1–3 menit</div>
+          <div class="step-body">GitHub butuh waktu untuk build website kamu. Refresh halaman Settings setelah beberapa menit.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Link kamu siap! 🎉</div>
+          <div class="step-body">Muncul kotak hijau di bagian atas Pages dengan link website kamu. Format: username.github.io/nama-repo</div>
+          <div class="note note-success" style="margin-top:12px;">
+            <span class="note-icon">🚀</span>
+            <span>Website kamu sekarang online dan bisa diakses siapa aja di seluruh dunia. Gratis. Selamanya selama akun GitHub aktif.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- SECTION UPDATE -->
+<section id="update">
+  <div class="container">
+    <span class="section-tag">06 — Update</span>
+    <h2>Cara Update Website</h2>
+    <div class="divider"></div>
+    <p style="font-size:15px; color:var(--text); margin-bottom:28px;">Website udah live tapi mau ubah isi konten atau tampilannya? Gampang.</p>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-title"><div class="icon icon-green">🖱️</div>Update via Browser</div>
+      <ul class="list">
+        <li>Buka file di GitHub (klik nama filenya)</li>
+        <li>Klik ikon pensil (Edit) di kanan atas area kode</li>
+        <li>Edit langsung di browser</li>
+        <li>Scroll ke bawah, klik "Commit changes"</li>
+        <li>Website otomatis update dalam 1–2 menit</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-purple">💻</div>Update via Git</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span class="code-lang">TERMINAL</span>
+        </div>
+        <pre><span class="cm"># Edit file kamu dulu, lalu jalankan:</span>
+
+<span class="cm"># Tambahkan perubahan</span>
+git add .
+
+<span class="cm"># Commit dengan pesan deskriptif</span>
+git commit -m <span class="str">"update: ubah warna header jadi biru"</span>
+
+<span class="cm"># Push ke GitHub</span>
+git push</pre>
+      </div>
+      <div class="note note-info" style="margin-top:16px;">
+        <span class="note-icon">💡</span>
+        <span>Biasain tulis pesan commit yang jelas. "update" doang itu nggak helpful. Tulis yang spesifik kayak "fix: tombol login error di mobile" atau "feat: tambah halaman kontak".</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- TROUBLESHOOT -->
+<section id="troubleshoot">
+  <div class="container">
+    <span class="section-tag">07 — Troubleshoot</span>
+    <h2>Error Umum & Solusinya</h2>
+    <div class="divider"></div>
+    <p style="font-size:15px; color:var(--text); margin-bottom:32px;">Ini error yang paling sering muncul. Jangan panik, semua ada solusinya.</p>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-red">❌</div>error: src refspec main does not match any</div>
+      <p style="margin-bottom:14px;">Muncul saat kamu belum pernah commit sama sekali sebelum push.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span class="code-lang">SOLUSI</span>
+        </div>
+        <pre><span class="cm"># Pastikan sudah ada file lalu add dan commit dulu:</span>
+git add .
+git commit -m <span class="str">"first commit"</span>
+git push -u origin main</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-red">❌</div>remote: Repository not found / 403 Forbidden</div>
+      <p style="margin-bottom:14px;">Bisa berarti URL repo salah, atau token/credentials kamu salah.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span class="code-lang">SOLUSI</span>
+        </div>
+        <pre><span class="cm"># Cek remote URL yang tersimpan:</span>
+git remote -v
+
+<span class="cm"># Kalau salah, hapus dan set ulang:</span>
+git remote remove origin
+git remote add origin https://github.com/username/nama-repo.git
+
+<span class="cm"># Kalau masalah credentials, hapus yang tersimpan lalu push ulang:</span>
+git config --global --unset credential.helper</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-red">❌</div>GitHub Pages: website tidak muncul / 404</div>
+      <p style="margin-bottom:14px;">Ada beberapa penyebab umum.</p>
+      <ul class="list">
+        <li>File utama tidak bernama <strong style="color:var(--text);">index.html</strong> (case sensitive, huruf kecil semua)</li>
+        <li>File ada di dalam subfolder, bukan di root repo. Pastiin index.html langsung di level pertama repo</li>
+        <li>GitHub Pages belum selesai build. Tunggu 2–5 menit lagi lalu refresh</li>
+        <li>Source branch di settings Pages salah. Pastiin pilih branch "main", bukan "master"</li>
+        <li>Repo masih Private. Ganti ke Public dulu di Settings &gt; General &gt; Danger Zone</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-red">❌</div>fatal: branch 'main' tidak ada, muncul 'master'</div>
+      <p style="margin-bottom:14px;">Default branch di Git lama adalah "master", sedangkan GitHub sekarang pakai "main". Bisa konflik.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span class="code-lang">SOLUSI — Rename master ke main</span>
+        </div>
+        <pre><span class="cm"># Ganti nama branch dari master ke main:</span>
+git branch -M main
+
+<span class="cm"># Lalu push:</span>
+git push -u origin main
+
+<span class="cm"># Atau set default branch baru untuk semua repo ke depan:</span>
+git config --global init.defaultBranch main</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-yellow">⚠️</div>CSS atau JS tidak load di GitHub Pages</div>
+      <ul class="list">
+        <li>Pastiin path file di HTML pakai <strong style="color:var(--text);">relative path</strong>, bukan absolute. Contoh benar: href="style.css" bukan href="/style.css"</li>
+        <li>Nama file case sensitive di server Linux GitHub. "Style.css" dan "style.css" dianggap beda file</li>
+        <li>Cek di tab Network di DevTools (F12) untuk lihat file mana yang gagal dimuat</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- RINGKASAN -->
+<section id="ringkasan">
+  <div class="container">
+    <span class="section-tag">08 — Ringkasan</span>
+    <h2>Teknologi yang Kamu Pakai</h2>
+    <div class="divider"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Teknologi</th>
+          <th>Fungsi</th>
+          <th>Wajib?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>HTML</td>
+          <td>Struktur halaman. Konten, heading, paragraf, tombol, gambar.</td>
+          <td>Ya</td>
+        </tr>
+        <tr>
+          <td>CSS</td>
+          <td>Tampilan visual. Warna, font, layout, animasi, responsif.</td>
+          <td>Ya</td>
+        </tr>
+        <tr>
+          <td>JavaScript</td>
+          <td>Interaktivitas. Klik tombol, fetch API, animasi dinamis.</td>
+          <td>Opsional</td>
+        </tr>
+        <tr>
+          <td>Git</td>
+          <td>Version control. Lacak perubahan kode, simpan histori.</td>
+          <td>Sangat disarankan</td>
+        </tr>
+        <tr>
+          <td>GitHub</td>
+          <td>Cloud storage untuk kode. Kolaborasi, backup, portfolio.</td>
+          <td>Ya</td>
+        </tr>
+        <tr>
+          <td>GitHub Pages</td>
+          <td>Hosting gratis. Website static langsung bisa diakses publik.</td>
+          <td>Ya (tujuan akhir)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note note-warn" style="margin-top:32px;">
+      <span class="note-icon">⚠️</span>
+      <span>GitHub Pages hanya untuk website <strong>static</strong> (HTML, CSS, JS). Kalau website kamu butuh backend (Node.js, PHP, Python) atau database, kamu perlu hosting berbayar seperti Railway, Render, atau VPS.</span>
+    </div>
+
+    <div class="note note-success" style="margin-top:0;">
+      <span class="note-icon">🎓</span>
+      <span>Udah selesai ngikutin semua langkah di atas? Kamu baru aja deploy website pertama kamu ke internet. Selamat, resmi jadi web dev sekarang!</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-big">Link kamu <span class="highlight">siap!</span></div>
+  <p style="margin-bottom:28px;">Sekarang giliran kamu yang build project keren.</p>
+  <div>
+    <span class="tag-pill">HTML</span>
+    <span class="tag-pill">CSS</span>
+    <span class="tag-pill">JavaScript</span>
+    <span class="tag-pill">Git</span>
+    <span class="tag-pill">GitHub</span>
+    <span class="tag-pill">GitHub Pages</span>
+  </div>
+  <p style="margin-top:40px; font-size:12px; color:var(--muted);">DhooZell.id — Tutorial ini dibuat supaya kamu paham, bukan cuma copy-paste 🧠</p>
+</footer>
+
+<script>
+  const sections = document.querySelectorAll('section[id]')
+  const navLinks = document.querySelectorAll('.nav a')
+  window.addEventListener('scroll', () => {
+    let current = ''
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.getAttribute('id') })
+    navLinks.forEach(a => {
+      a.classList.remove('active')
+      if (a.getAttribute('href') === '#' + current) a.classList.add('active')
+    })
+  })
+  navLinks.forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault()
+      document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior:'smooth' })
+    })
+  })
+</script>
+</body>
+</html>
